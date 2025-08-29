@@ -1,5 +1,6 @@
 from csv import reader
 from os import uname_result
+import re
 
 
 def open_file(filename):
@@ -30,6 +31,7 @@ def check_row_lengths(dataset):
         if len(row) != expected_length:
             print(f"Row {i}: has {len(row)} columns instead of {expected_length}")
             print(f"Row {i}: {row}")
+            del googlestore[i]
 
 
 def check_duplicates(dataset):
@@ -44,29 +46,35 @@ def check_duplicates(dataset):
     print('Number of duplicate apps:', len(duplicate_apps))
     print('Examples of duplicate apps', duplicate_apps[:10])
 
+
+check_duplicates(googlestore)
+
 reviews_max = {}
 
 for app in googlestore[1:]:
     name = app[0]
-    n_reviews = app[3]
-    if "M" in n_reviews:
-        n_reviews = n_reviews.replace("M", "")
-        n_reviews = float(n_reviews) * 1000000
-    else:
-        n_reviews = float(n_reviews)
+    count = re.sub(r"[a-zA-Z]", "", app[3])
+    # count = app[3]
 
-    if name in reviews_max and reviews_max[name] < n_reviews:
+    # if re.match(r'^[a-zA-Z]+$', app[3]):
+    #     print(1)
+    #     continue
+
+    n_reviews = float(count)
+
+    if not name in reviews_max:
+        reviews_max[name] = n_reviews
+    elif name in reviews_max and reviews_max[name] < n_reviews:
         reviews_max[name] = n_reviews
 
-    if name not in reviews_max:
-        reviews_max[name] = n_reviews
+print(len(reviews_max.keys()))
 
 android_clean = []
 already_added = []
 
 for app in googlestore[1:]:
     name = app[0]
-    n_reviews = 
+    #n_reviews =
 
 
 
